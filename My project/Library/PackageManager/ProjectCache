@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638087938410164044
-    m_Hash: 2891438559
+      ticks: 638087943550103597
+    m_Hash: 2584840489
   m_LockFileStatus:
     m_FilePath: C:/Users/glssa/Documents/GitHub/unityFile/My project/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638087938462773744
-    m_Hash: 1516643155
+      ticks: 638087943550103597
+    m_Hash: 1635057917
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:
