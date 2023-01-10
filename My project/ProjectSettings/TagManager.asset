@@ -3,7 +3,10 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Collection
+  - Enemies
+  - DeadLine
   layers:
   - Default
   - TransparentFX
@@ -11,7 +14,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Ground
   - 
   - 
   - 
@@ -42,14 +45,14 @@ TagManager:
     uniqueID: 0
     locked: 0
   - name: background
-    uniqueID: 1486855575
+    uniqueID: 2663132117
     locked: 0
   - name: environment
-    uniqueID: 1388261887
+    uniqueID: 395181969
     locked: 0
-  - name: UI
-    uniqueID: 201332993
+  - name: collection
+    uniqueID: 2349280515
     locked: 0
-  - name: player
-    uniqueID: 1745075779
+  - name: forntground
+    uniqueID: 2350228797
     locked: 0
