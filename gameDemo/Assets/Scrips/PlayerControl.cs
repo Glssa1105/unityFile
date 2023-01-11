@@ -5,25 +5,25 @@ using UnityEngine;
 public class PlayerControl : MonoBehaviour
 {
     [SerializeField]private GameManager GameManager;
-    public Vector2 target;
+    [SerializeField]private PathManager pathManager;
     public float waitTime;
     public int moveRange;
     public float speed;
+    public Vector2 PaTarget;
     public bool ableToMove;
+    private bool Moving;
     // Start is called before the first frame update
     void Start()
     {
-        ableToMove = true;
-        waitTime = 3;
         GameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
     
    
     void Update()
     {
-        if(!ableToMove)
+        if(Moving)
         {
-            Running(target);
+           Running(PaTarget);
         }
     }
 
@@ -31,24 +31,37 @@ public class PlayerControl : MonoBehaviour
     {
         Debug.Log("这是一个玩家,属性为" + this.tag+"位置为"+transform.position.x+","+transform.position.y);
     }
+
     
-    public void Move(float x, float y)
+    public void Move(List<GameObject> Path)
     {
-    //    transform.position = new Vector2(x,y);
-        target = new Vector2(x,y);
+        int times = Path.Count;
+        Debug.Log(times);
         ableToMove = false;
-        GameManager.CloseMoveRange();
-        StartCoroutine(counter(waitTime));
+        StartCoroutine(counter(waitTime,times,Path));        
     }
 
     private void Running(Vector2 target)
     {
-        transform.position = Vector3.MoveTowards(transform.position,target,2*Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position,target,speed*Time.deltaTime);
     }
 
-    IEnumerator counter(float time)
+    IEnumerator counter(float waitTime,int times,List<GameObject> target)
     {
-        yield return new WaitForSeconds(time);
+        Moving = true;
+        for(int i=times-1;i>=0;i--)
+        {
+            yield return new WaitForSeconds(waitTime);
+            PaTarget= new Vector2(target[i].transform.position.x,target[i].transform.position.y);
+            //gameObject.transform.position = target[i].transform.position;
+            //Running(new Vector2(target[i].transform.position.x,target[i].transform.position.y));
+            PathDisplayer pathDisplayer = target[i].transform.Find("PathDisplayer").GetComponent<PathDisplayer>();
+            pathDisplayer.CancelNode();
+        }
+        yield return new WaitForSeconds(waitTime);
+        Moving = false;
+        Debug.Log("Moving");
+        GameManager.CloseMoveRange();
         ableToMove =true;
     }
 

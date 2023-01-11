@@ -5,14 +5,23 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public GameObject[] cells;
+    
     public GameObject selected;
+    public GameObject startCell;
 
-    private List<GameObject> moveList;
+    public List<GameObject> moveList;
+    private List<GameObject> now;
+    private List<GameObject> open;
+    private List<GameObject> closed;
+
     // Start is called before the first frame update
     void Start()
     {
         cells = GameObject.FindGameObjectsWithTag("Cell");
         moveList = new List<GameObject>();
+        now = new List<GameObject>();
+        open = new List<GameObject>();
+        closed = new List<GameObject>();
     }
 
     // Update is called once per frame
@@ -24,17 +33,40 @@ public class GameManager : MonoBehaviour
     public void ShowMoveRange()
     {
         CloseMoveRange();
-        foreach(var cell in cells)
+        int range= selected.GetComponent<PlayerControl>().moveRange;
+        now.Add(startCell);//将开始方块加入NOW
+        closed.Add(startCell);
+        for(int i=0;i<range;i++)
         {
-            int range = selected.GetComponent<PlayerControl>().moveRange;
-            if(((int)(Mathf.Abs(cell.transform.position.x-selected.transform.position.x)+(Mathf.Abs(cell.transform.position.y-selected.transform.position.y))))<=range&&cell.GetComponent<CellControl>().personaInsist!=true)
+            foreach(var current in now)
             {
-                cell.GetComponent<CellControl>().Moveable = true;
-                cell.GetComponent<CellControl>().moveCell.SetActive(true);
-                moveList.Add(cell);
+                closed.Add(current);
+                List<GameObject>neighbours =  current.GetComponent<CellControl>().GetNeighbour();
+                foreach(var neighbour in neighbours)
+                {
+                    if(closed.Contains(neighbour))
+                    {
+                        continue;
+                    }
+                    if(!open.Contains(neighbour))
+                    {
+                        open.Add(neighbour);
+                        neighbour.GetComponent<CellControl>().Moveable = true;
+                        neighbour.GetComponent<CellControl>().moveCell.SetActive(true);
+                        moveList.Add(neighbour);
+                    }
+                }
             }
+            now.Clear();
+            foreach(var item in open)
+            {
+                now.Add(item);
+            }
+            open.Clear();
         }
-
+        now.Clear();
+        open.Clear();
+        closed.Clear();
     }
 
     public void ShowAttackRange()
@@ -55,6 +87,8 @@ public class GameManager : MonoBehaviour
     {
         
     }
+
+   
 
 
 }
