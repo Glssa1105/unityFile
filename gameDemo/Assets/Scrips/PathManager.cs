@@ -4,17 +4,22 @@ using UnityEngine;
 
 public class PathManager : MonoBehaviour
 {
+    [SerializeField]private GameManager gameManager;
     public List<GameObject> OpenList;
     public List<GameObject> ClosedList;
 
     public List<GameObject> Path;
+    public List<GameObject> rPath;
     public GameObject StartNode;
     public GameObject EndNode;
     // Start is called before the first frame update
     void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         OpenList = new List<GameObject>();
         ClosedList = new List<GameObject>();
+        Path = new List<GameObject>();
+        rPath = new List<GameObject>();
     }
     
     public void ClearNode()
@@ -136,19 +141,12 @@ public class PathManager : MonoBehaviour
         }
     }
     
-    public void ShowShowWay()
-    {
-        GameObject current = EndNode;
-        while(current!=StartNode)
-        {
-            Debug.Log("节点名称为x"+current.name);
-            current = current.GetComponent<CellControl>().parentNode;
-        }
-    }
 
     public void FindPath()
     {
-        ClearNode();
+        //ClearNode();
+        OpenList.Clear();//ssss
+        StartNode = gameManager.startCell;
         OpenList.Add(StartNode);
         for(int i=0;i<100;i++)
         {
@@ -176,6 +174,59 @@ public class PathManager : MonoBehaviour
                     OpenList.Add(cell);//添加至代搜索节点
                 }
             }
+        }
+        ClosedList.Clear();
+    }
+    public void rFindPath()
+    {
+        OpenList.Clear();
+        ClosedList.Clear();
+        OpenList.Add(StartNode);
+        for(int i=0;i<100;i++)
+        {
+            GameObject current = LowestCost(OpenList);
+            OpenList.Remove(current);
+            ClosedList.Add(current);
+            if(current == EndNode)
+            {
+                Debug.Log("getway!");
+                // ShowPathWay();
+                return ;
+            }
+            List<GameObject> neighbours = current.GetComponent<CellControl>().GetNeighbour();
+            foreach(var cell in neighbours)
+            {
+                if(ClosedList.Contains(cell))
+                {
+                    continue;
+                }
+                if(!ClosedList.Contains(cell))
+                {
+                    cell.GetComponent<CellControl>().CalculateCost();
+                    cell.GetComponent<CellControl>().parentNode = current;
+                    OpenList.Add(cell);//添加至代搜索节点
+                }
+            }
+        }
+        OpenList.Clear();
+        ClosedList.Clear();
+    }
+
+    public void GetrPath()
+    {
+        rPath.Clear();
+        GameObject begin = EndNode;
+        GameObject last = EndNode;
+        GameObject next;
+        for(int i=0;i<100;i++)
+        {
+            Debug.Log("rPath.name="+begin.name);
+            next = begin.GetComponent<CellControl>().parentNode;
+            rPath.Add(begin);
+            last = begin;
+            begin = begin.GetComponent<CellControl>().parentNode;
+            if(begin == StartNode)
+            return ;
         }
     }
 }
