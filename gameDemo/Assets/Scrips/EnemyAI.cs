@@ -7,24 +7,40 @@ public class EnemyAI : MonoBehaviour
     private List<GameObject> now;
     private List<GameObject> open;
     private List<GameObject> closed;
-    [SerializeField]private List<GameObject> movelist;
-    [SerializeField]private GameObject StartCell;
+    
+    public List<GameObject> movelist;
+    public GameObject StartCell;
     [SerializeField]private GameObject CloestPlayer;
     [SerializeField]private Vector2 PaTarget;
     [SerializeField]private PathManager pathManager;
     [SerializeField]private GameManager gameManager;
     [SerializeField]private UIManager uIManager;
-        
+    [SerializeField]private EnemySQ enemySQ;
+    
+    /*
+     Skilltype : 1. 单点打击   2. AOE //后面待定
+    
+    int Skilltype;//技能种类
+    int Skillrange;//效果范围
+    int Skillvalue;//效果数值
+    
+    当 skilltype 为 1 时为单点打击
+    skillrange为可打击范围
+    skillvalue为伤害
+
+    当 skilltype 为 2 时为AOE
+    skillrange为群体打击范围
+    skillvalue为伤害
+    */
+
         //以下为AI属性
-        public int CharacterAttribute;//角色属性！！！
+        public int defend;//角色防御属性！！！
+        public int assault;//角色攻击属性！！！
         public int moveRange;//移动范围
         public int attackRange;//可攻击范围大小
         public int number;//角色立场
         public int maxBlood;//最大血量
         public int blood;//目前血量
-        public int power;//攻击力
-        public int MaxMP;//最大MP
-        public int Mp;//目前MP
         [SerializeField]private float waitTime;//每次运动等待时间
         [SerializeField]private int BestWantDistance;//AI倾向与最近玩家的位置距离
     
@@ -33,6 +49,7 @@ public class EnemyAI : MonoBehaviour
     [SerializeField]private GameObject[] playerList;
     [SerializeField]private float speed;
     [SerializeField]private bool Moving;
+    [SerializeField]private bool end;
     //    public int status;//表示目标状态！0：静止 1：运动 2：攻击
     //
 
@@ -49,11 +66,13 @@ public class EnemyAI : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         playerList = GameObject.FindGameObjectsWithTag("Player");
         pathManager = GameObject.Find("PathManager").GetComponent<PathManager>();
+        enemySQ = gameObject.GetComponent<EnemySQ>();
     }
 
     // Update is called once per frame
     void Update()
     {   
+        
         if(Input.GetKeyDown(KeyCode.K))
         {
             Go();
@@ -66,7 +85,7 @@ public class EnemyAI : MonoBehaviour
     
     public void Go()//主要流程！
     {
-        playerList = GameObject.FindGameObjectsWithTag("Player");
+        updatePlayerList();
         SetStartCell();
         GetMoveList(moveRange);
         FindClosestPlayer();
@@ -172,7 +191,6 @@ public class EnemyAI : MonoBehaviour
     public void FindClosestPlayer()
     {
         CloestPlayer = playerList[0];
-       
         foreach(var item in playerList)
         {
             if(Mathf.Abs(item.transform.position.x-gameObject.transform.position.x)+Mathf.Abs(item.transform.position.y-gameObject.transform.position.y)<
@@ -224,15 +242,9 @@ public class EnemyAI : MonoBehaviour
         CloseMoveList();
         SetStartCell();
         GetAttackList(attackRange);
-        foreach(var item in movelist)
-        {
-            if(item.GetComponent<CellControl>().personaInsist&&item.GetComponent<CellControl>().persona.tag=="Player")
-            {
-                Attack(item.GetComponent<CellControl>().persona.GetComponent<PlayerControl>());
-                break;
-            }
-        }
+        enemySQ.Move();
         CloseMoveList();
+        SetStartCell();
         uIManager.nextRun();
     }
 
@@ -249,17 +261,17 @@ public class EnemyAI : MonoBehaviour
         uIManager.MessagePrinter.text = "角色" + gameObject.name + "从" +StartCell.name + "移动至" + pathManager.EndNode.name;  
     }
 
-    public void Attack(PlayerControl target)
-    {
-        Debug.Log("目标为！："+target.name);
-        target.blood -=power;
-        uIManager.MessagePrinter.text =gameObject.name+" 对 " + target.gameObject.name +  "造成了" + power + "点伤害！";
-        if(target.blood<=0)
-        {
-            uIManager.MessagePrinter.text += target.name+"死亡！";
-            target.gameObject.SetActive(false);
-        }
-    }
+    // public void Attack(PlayerControl target)
+    // {
+    //     Debug.Log("目标为！："+target.name);
+    //     target.blood -=power;
+    //     uIManager.MessagePrinter.text =gameObject.name+" 对 " + target.gameObject.name +  "造成了" + power + "点伤害！";
+    //     if(target.blood<=0)
+    //     {
+    //         uIManager.MessagePrinter.text += target.name+"死亡！";
+    //         gameManager.Dead(target.gameObject);
+    //     }
+    // }
 
     private void updatePlayerList()
     {

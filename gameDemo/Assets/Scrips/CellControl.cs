@@ -6,7 +6,6 @@ public class CellControl : MonoBehaviour
 {
     [SerializeField] private GameManager GameManager;
     [SerializeField] private UIManager uIManager;
-    [SerializeField] private SkillBoard skillBoard;
 
     public GameObject persona;
     
@@ -72,7 +71,7 @@ public class CellControl : MonoBehaviour
     {
         if(personaInsist&&persona.tag == "Player")
         {
-            
+
             if(persona.GetComponent<PlayerControl>().ableToMove)
             {  
                 if(GameManager.startCell)
@@ -84,7 +83,9 @@ public class CellControl : MonoBehaviour
                 Debug.Log(GameManager.startCell.name);
                 GameManager.startCell.GetComponent<CellControl>().moveCell.SetActive(true);
                 uIManager.CreateOption();
+                uIManager.ClossSkillBoard();
                 pathManager.ClearNode();
+                GameManager.startCell.GetComponent<CellControl>().moveCell.SetActive(true);
             }
         }
         Debug.Log("这是一个单元格,属性为" + this.tag+"位置为"+transform.position.x+","+transform.position.y);
@@ -109,9 +110,13 @@ public class CellControl : MonoBehaviour
             }
             else if(GameManager.selected.GetComponent<PlayerControl>().status == 3)
             {
-
                 GameManager.CloseAttackRange();
-
+                if(persona!=null)
+                {
+                    GameManager.target = gameObject;
+                    GameManager.dischargeMagic();
+                    GameManager.CloseAttackRange();
+                }
             }
         }
        

@@ -21,7 +21,7 @@ public class PersonaUI : MonoBehaviour
     {
         player1_Name.text = player1.name;
         player1_stamina.text = player1.stamina.ToString() + " / " + player1.Maxstamina.ToString(); 
-        player1_HP.text = player1.blood.ToString(); 
-        player1_MP.text = player1.Mp.ToString();  
+        player1_HP.text = player1.blood.ToString()+ " / " + player1.maxBlood.ToString(); 
+        player1_MP.text = player1.Mp.ToString()+ " / " + player1.MaxMP.ToString();  
     }
 }
