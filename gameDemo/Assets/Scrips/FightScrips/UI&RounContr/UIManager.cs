@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour
     public Text MessagePrinter;
     private int ControlNumber;
     private bool ifOptionOpen;
+
     [SerializeField]private Text player_HP;
     [SerializeField]private Text player_MP;
     [SerializeField]private Text player_stamina;
@@ -34,10 +35,13 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]private GameObject WinUI;
     [SerializeField]private GameObject LoseUI;
+    [SerializeField]private GameObject UnmoveableTips;
+    [SerializeField]private GameMessage gameMessage;
     void Start()
     {
         AbleToMoveNumber = 0;
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        gameMessage = GameObject.Find("GameMessage").GetComponent<GameMessage>();
         playerList = GameObject.FindGameObjectsWithTag("Player");
         enemyList = GameObject.FindGameObjectsWithTag("Enemy");
     }
@@ -105,6 +109,9 @@ public class UIManager : MonoBehaviour
     {
         gameManager.CloseMoveRange();
         gameManager.CloseAttackRange();
+        //////////////
+        if(gameManager.startCell!=null)
+        gameManager.startCell.GetComponent<CellControl>().moveCell.SetActive(false);
         DestroyOption();
         switch(AbleToMoveNumber)
         {
@@ -175,9 +182,42 @@ public class UIManager : MonoBehaviour
         LoseUI.SetActive(false);
     }
 
+    public void ShowUnmoveableTips()
+    {
+        UnmoveableTips.SetActive(true);
+    }
+
+    public void CloseUnmoveableTips()
+    {
+        UnmoveableTips.SetActive(false);
+    }
+
     public void LoadExploreScene()
     {
-        SceneManager.LoadScene(1);
+        foreach(var item in playerList)
+        {
+            if(item.GetComponent<PlayerControl>().playerNumber == 1)
+            {
+                gameMessage.Player_1_Hp = item.GetComponent<PlayerControl>().blood;
+                gameMessage.Player_1_Mp = item.GetComponent<PlayerControl>().Mp;
+            }
+            if(item.GetComponent<PlayerControl>().playerNumber == 2)
+            {
+                gameMessage.Player_2_Hp = item.GetComponent<PlayerControl>().blood;
+                gameMessage.Player_2_Mp = item.GetComponent<PlayerControl>().Mp;
+            }
+            if(item.GetComponent<PlayerControl>().playerNumber == 3)
+            {
+                gameMessage.Player_3_Hp = item.GetComponent<PlayerControl>().blood;
+                gameMessage.Player_3_Mp = item.GetComponent<PlayerControl>().Mp;
+            }
+            if(item.GetComponent<PlayerControl>().playerNumber == 4)
+            {
+                gameMessage.Player_4_Hp = item.GetComponent<PlayerControl>().blood;
+                gameMessage.Player_4_Mp = item.GetComponent<PlayerControl>().Mp;
+            }
+        }
+        SceneManager.LoadScene(7);
     }
     
     public void ResetScene()

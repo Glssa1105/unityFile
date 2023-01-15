@@ -236,7 +236,7 @@ MonoBehaviour:
   MotherList:
   - {fileID: 1078728731}
   stageNumber: 7
-  stageStatus: 0
+  stageStatus: 5
   exploreManager: {fileID: 0}
   exploreUI: {fileID: 0}
 --- !u!61 &82966682
@@ -1338,7 +1338,7 @@ MonoBehaviour:
   MotherList:
   - {fileID: 94062324}
   stageNumber: 5
-  stageStatus: 2
+  stageStatus: 4
   exploreManager: {fileID: 0}
   exploreUI: {fileID: 0}
 --- !u!61 &595862371
@@ -2067,25 +2067,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player1Insist: 1
   Player2Insist: 1
-  Player3Insist: 0
-  Player4Insist: 0
+  Player3Insist: 1
+  Player4Insist: 1
   stageNum: 0
-  Player_1_Hp: 1
-  Player_1_MaxHp: 0
-  Player_1_Mp: 0
-  Player_1_MaxMp: 0
-  Player_2_Hp: 0
-  Player_2_MaxHp: 0
-  Player_2_Mp: 0
-  Player_2_MaxMp: 0
-  Player_3_Hp: 0
-  Player_3_MaxHp: 0
-  Player_3_Mp: 0
-  Player_3_MaxMp: 0
-  Player_4_Hp: 0
-  Player_4_MaxHp: 0
-  Player_4_Mp: 0
-  Player_4_MaxMp: 0
+  Player_1_Hp: 100
+  Player_1_MaxHp: 100
+  Player_1_Mp: 100
+  Player_1_MaxMp: 100
+  Player_2_Hp: 100
+  Player_2_MaxHp: 100
+  Player_2_Mp: 100
+  Player_2_MaxMp: 100
+  Player_3_Hp: 100
+  Player_3_MaxHp: 100
+  Player_3_Mp: 100
+  Player_3_MaxMp: 100
+  Player_4_Hp: 100
+  Player_4_MaxHp: 100
+  Player_4_Mp: 100
+  Player_4_MaxMp: 100
   test: 0
 --- !u!4 &937406084
 Transform:
@@ -2514,7 +2514,7 @@ MonoBehaviour:
   MotherList:
   - {fileID: 94062324}
   stageNumber: 6
-  stageStatus: 2
+  stageStatus: 0
   exploreManager: {fileID: 0}
   exploreUI: {fileID: 0}
 --- !u!61 &1078728733
@@ -3003,7 +3003,7 @@ MonoBehaviour:
   MotherList:
   - {fileID: 379531298}
   stageNumber: 1
-  stageStatus: 0
+  stageStatus: 1
   exploreManager: {fileID: 0}
   exploreUI: {fileID: 0}
 --- !u!61 &1402630057
@@ -4050,7 +4050,7 @@ MonoBehaviour:
   MotherList:
   - {fileID: 2059890767}
   stageNumber: 10
-  stageStatus: 0
+  stageStatus: 6
   exploreManager: {fileID: 0}
   exploreUI: {fileID: 0}
 --- !u!61 &1927811223
@@ -4178,7 +4178,7 @@ MonoBehaviour:
   MotherList:
   - {fileID: 879489846}
   stageNumber: 9
-  stageStatus: 0
+  stageStatus: 6
   exploreManager: {fileID: 0}
   exploreUI: {fileID: 0}
 --- !u!61 &2059890769
@@ -4306,7 +4306,7 @@ MonoBehaviour:
   MotherList:
   - {fileID: 1402630055}
   stageNumber: 3
-  stageStatus: 2
+  stageStatus: 3
   exploreManager: {fileID: 0}
   exploreUI: {fileID: 0}
 --- !u!61 &2115736274

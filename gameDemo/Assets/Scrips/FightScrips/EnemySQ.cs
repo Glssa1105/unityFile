@@ -144,10 +144,7 @@ ActionNum表
                         closed.Clear();
                         moveList.Add(item);
                         foreach(var target in moveList)
-                        {
-                            //
-                            //target.GetComponent<CellControl>().attackCell.SetActive(true);
-                            
+                        {                            
                             if(target.GetComponent<CellControl>().personaInsist&&target.GetComponent<CellControl>().persona.tag=="Player")
                             {
                                 Attack(target.GetComponent<CellControl>().persona.GetComponent<PlayerControl>());

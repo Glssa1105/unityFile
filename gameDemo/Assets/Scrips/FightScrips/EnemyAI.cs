@@ -93,6 +93,10 @@ public class EnemyAI : MonoBehaviour
         gameManager.startCell = StartCell;
         gameManager.selected = gameObject;
         pathManager.EndNode = FindBestCell();
+        if(pathManager.EndNode==null)
+        {
+            uIManager.nextRun();
+        }
         Debug.Log(pathManager.EndNode.name);
         pathManager.StartNode=StartCell;
         Debug.Log(pathManager.StartNode.name);
@@ -205,7 +209,10 @@ public class EnemyAI : MonoBehaviour
 
     public GameObject FindBestCell()
     {
-        
+        if(movelist.Count == 0)
+        {
+            return null;
+        }
         GameObject BestCell=movelist[0];
         float BestScore = 0;
         foreach(var item in movelist)

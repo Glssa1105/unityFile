@@ -71,21 +71,19 @@ public class CellControl : MonoBehaviour
     {
         if(personaInsist&&persona.tag == "Player")
         {
-
-            if(persona.GetComponent<PlayerControl>().ableToMove)
-            {  
-                if(GameManager.startCell)
-                GameManager.startCell.GetComponent<CellControl>().moveCell.SetActive(false);
-                GameManager.CloseMoveRange();
-                GameManager.CloseAttackRange();
-                GameManager.selected = persona;
-                GameManager.startCell = gameObject;
-                Debug.Log(GameManager.startCell.name);
-                GameManager.startCell.GetComponent<CellControl>().moveCell.SetActive(true);
-                uIManager.CreateOption();
-                pathManager.ClearNode();
-                GameManager.startCell.GetComponent<CellControl>().moveCell.SetActive(true);
-            }
+            persona.GetComponent<PlayerControl>().ableToMove = true;
+            
+            if(GameManager.startCell)
+            GameManager.startCell.GetComponent<CellControl>().moveCell.SetActive(false);
+            GameManager.CloseMoveRange();
+            GameManager.CloseAttackRange();
+            GameManager.selected = persona;
+            GameManager.startCell = gameObject;
+            Debug.Log(GameManager.startCell.name);
+            GameManager.startCell.GetComponent<CellControl>().moveCell.SetActive(true);
+            uIManager.CreateOption();
+            pathManager.ClearNode();
+            GameManager.startCell.GetComponent<CellControl>().moveCell.SetActive(true);
         }
         Debug.Log("这是一个单元格,属性为" + this.tag+"位置为"+transform.position.x+","+transform.position.y);
         if(Moveable&&GameManager.selected.GetComponent<PlayerControl>().ableToMove)

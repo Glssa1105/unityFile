@@ -104,20 +104,10 @@ public class PlayerControl : MonoBehaviour
    
     void Update()
     {
-        CheckAbleToMove();
         if(Moving)
         {
            Running(PaTarget);
         }
-    }
-    private void CheckAbleToMove()
-    {
-        if(uIManager.AbleToMoveNumber!=number)
-        {
-            ableToMove = false;
-        }
-        else
-        ableToMove = true;
     }
 
     private void OnMouseDown()
@@ -179,7 +169,10 @@ public class PlayerControl : MonoBehaviour
         Moving = false;
         Debug.Log("Moving");
         GameManager.CloseMoveRange();
-        ableToMove =true;
+        //////////////////////
+        SetStartCell();
+        /////////////////////
+        // ableToMove =true;
     }
 
 
@@ -187,6 +180,9 @@ public class PlayerControl : MonoBehaviour
     {
         RaycastHit2D hits = Physics2D.Raycast(transform.position,Vector2.zero);
         hits.collider.gameObject.GetComponent<CellControl>().personaInsist=true;
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        GameManager.startCell = hits.collider.gameObject;
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         hits.collider.gameObject.GetComponent<CellControl>().persona = gameObject;
     }
 

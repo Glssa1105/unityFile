@@ -7,6 +7,13 @@ public class GameManager : MonoBehaviour
     public bool TEST;//true 不从 GameMessage中读取信息   false 读取信息
     public int SceneNUMBER; 
     
+    public GameObject player1;
+    public GameObject player2;
+    public GameObject player3;
+    public GameObject player4;
+    [SerializeField]private GameMessage gameMessage;
+
+
     public GameObject[] cells;
     public GameObject[] enemyList;
 
@@ -36,6 +43,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gameMessage = GameObject.Find("GameMessage").GetComponent<GameMessage>();
         cells = GameObject.FindGameObjectsWithTag("Cell");
         moveList = new List<GameObject>();
         now = new List<GameObject>();
@@ -46,6 +54,26 @@ public class GameManager : MonoBehaviour
         uIManager = GameObject.Find("UIManager").GetComponent<UIManager>();
         insistEnemyList = GameObject.FindGameObjectsWithTag("Enemy");
         insistPlayerList = GameObject.FindGameObjectsWithTag("Player");
+        if(TEST)
+        {
+            if(gameMessage.Player1Insist)
+            {
+                player1.SetActive(true);
+            }
+            if(gameMessage.Player2Insist)
+            {
+                player2.SetActive(true);
+            }
+            if(gameMessage.Player3Insist)
+            {
+                player3.SetActive(true);
+            }
+            if(gameMessage.Player4Insist)
+            {
+                player4.SetActive(true);
+            }
+
+        }
         foreach(var item in insistEnemyList)
         {
             iElist.Add(item);
@@ -188,6 +216,10 @@ public class GameManager : MonoBehaviour
     当 skilltype 为 2 时为AOE
     skillrange为群体打击范围
     skillvalue为伤害
+
+    当 skilltype 为 3，4 时为对目标及其周边的AOE
+    3为敌人及其周边距离小于等于1
+    4为敌人及其周边距离小于等于2
     */
     public void dischargeMagic()
     {
@@ -203,7 +235,7 @@ public class GameManager : MonoBehaviour
         switch(Skilltype)
         {
             case 1:
-                target.GetComponent<CellControl>().persona.GetComponent<EnemyAI>().blood-=countHurt(target.GetComponent<CellControl>().persona.GetComponent<EnemyAI>().defend,SkillStatus,Skillvalue);
+                target.GetComponent<CellControl>().persona.GetComponent<EnemyAI>().blood-=countHurt(SkillStatus,target.GetComponent<CellControl>().persona.GetComponent<EnemyAI>().defend,Skillvalue);
                 uIManager.MessagePrinter.text = selected.name+"用技能"+SkillName + "对 " +target.GetComponent<CellControl>().persona.name +  "造成了" + Skillvalue + "点伤害！";
                 if(target.GetComponent<CellControl>().persona.GetComponent<EnemyAI>().blood<=0)
                 {
@@ -219,8 +251,8 @@ public class GameManager : MonoBehaviour
                     {
                         if(item.GetComponent<CellControl>().persona.tag=="Enemy")
                         {
-                            item.GetComponent<CellControl>().persona.GetComponent<EnemyAI>().blood-=countHurt(item.GetComponent<CellControl>().persona.GetComponent<EnemyAI>().defend,SkillStatus,Skillvalue);
-                            uIManager.MessagePrinter.text = selected.name+"用技能" + SkillName +"对 " +target.GetComponent<CellControl>().persona.name +  "造成了" + Skillvalue + "点伤害！";
+                            item.GetComponent<CellControl>().persona.GetComponent<EnemyAI>().blood-=countHurt(SkillStatus,item.GetComponent<CellControl>().persona.GetComponent<EnemyAI>().defend,Skillvalue);
+                            uIManager.MessagePrinter.text = selected.name+"用技能" + SkillName +"对 " +target.GetComponent<CellControl>().persona.name +  "造成了" + countHurt(SkillStatus,item.GetComponent<CellControl>().persona.GetComponent<EnemyAI>().defend,Skillvalue) + "点伤害！";
                         }
                     }
                 }
@@ -232,20 +264,109 @@ public class GameManager : MonoBehaviour
                         uIManager.MessagePrinter.text = item.name + "死亡！\n";
                         Dead(item);
                     }
-                    
                 }
                 break;
+            case 3:
+                uIManager.MessagePrinter.text = null;
+                List<GameObject> attackable = target.GetComponent<CellControl>().GetNeighbourAttack();
+                attackable.Add(target);
+                foreach(var item in attackable)
+                {
+                    if(item.GetComponent<CellControl>().persona!=null)
+                    {
+                        if(item.GetComponent<CellControl>().persona.tag=="Enemy")
+                        {
+                            item.GetComponent<CellControl>().persona.GetComponent<EnemyAI>().blood-=countHurt(SkillStatus,item.GetComponent<CellControl>().persona.GetComponent<EnemyAI>().defend,Skillvalue);
+                            uIManager.MessagePrinter.text = selected.name+"用技能" + SkillName +"对 " +target.GetComponent<CellControl>().persona.name +  "造成了" + countHurt(SkillStatus,item.GetComponent<CellControl>().persona.GetComponent<EnemyAI>().defend,Skillvalue) + "点伤害！";
+                        }
+                    }
+                }
+                attackable.Clear();
+                enemyList = GameObject.FindGameObjectsWithTag("Enemy");
+                foreach(var item in enemyList)
+                {
+                    if(item.GetComponent<EnemyAI>().blood<=0)
+                    {
+                        uIManager.MessagePrinter.text = item.name + "死亡！\n";
+                        Dead(item);
+                    }
+                }
+                break;
+            case 4:
+                uIManager.MessagePrinter.text = null;
+                List<GameObject> now = new List<GameObject>();
+                List<GameObject> closed = new List<GameObject>();
+                List<GameObject> open = new List<GameObject>();
+                List<GameObject> targetList = new List<GameObject>();
+                now.Add(target);
+                closed.Add(target);
+                for(int i=0;i<2;i++)
+                {
+                    foreach(var current in now)
+                    {
+                        closed.Add(current);
+                        List<GameObject>neighbours = current.GetComponent<CellControl>().GetNeighbourAttack();
+                        foreach(var neighbour in neighbours)
+                        {
+                            if(closed.Contains(neighbour))
+                            {
+                                continue;
+                            }
+                            if(!open.Contains(neighbour))
+                            {
+                                open.Add(neighbour);
+                                targetList.Add(neighbour);
+                            }
+                        }
+                    }
+                    now.Clear();
+                    foreach(var ittt in open)
+                    {
+                        now.Add(ittt);
+                    }
+                    open.Clear();
+                }
+                now.Clear();
+                open.Clear();
+                closed.Clear();
+                targetList.Add(target);
+                foreach(var item in targetList)
+                {
+                    if(item.GetComponent<CellControl>().persona!=null)
+                    {
+                        if(item.GetComponent<CellControl>().persona.tag=="Enemy")
+                        {
+                            item.GetComponent<CellControl>().persona.GetComponent<EnemyAI>().blood-=countHurt(SkillStatus,item.GetComponent<CellControl>().persona.GetComponent<EnemyAI>().defend,Skillvalue);
+                            uIManager.MessagePrinter.text = selected.name+"用技能" + SkillName +"对 " +item.GetComponent<CellControl>().persona.name +  "造成了" + countHurt(SkillStatus,item.GetComponent<CellControl>().persona.GetComponent<EnemyAI>().defend,Skillvalue) + "点伤害！";
+                        }
+                    }
+                }
+                enemyList = GameObject.FindGameObjectsWithTag("Enemy");
+                foreach(var item in enemyList)
+                {
+                    if(item.GetComponent<EnemyAI>().blood<=0)
+                    {
+                        uIManager.MessagePrinter.text = item.name + "死亡！\n";
+                        Dead(item);
+                    }
+                }
+                targetList.Clear();
+                break;    
         }
     }
 
    public void yiDong()
    {
+        CloseMoveRange();
+        CloseAttackRange();
         selected.GetComponent<PlayerControl>().status = 1;
         ShowMoveRange(selected.GetComponent<PlayerControl>().stamina);
    }
 
     public void gongJi()
     {
+        CloseMoveRange();
+        CloseAttackRange();
         if(selected.GetComponent<PlayerControl>().HaveAttacked==true)
         {
             uIManager.MessagePrinter.text = selected.name + "在本回合已经攻击过了";
@@ -257,6 +378,8 @@ public class GameManager : MonoBehaviour
 
     public void jiNeng1()
     {
+        CloseMoveRange();
+        CloseAttackRange();
         if(selected.GetComponent<PlayerControl>().Mp<selected.GetComponent<PlayerControl>().skill_1_MpCost)
         {
             uIManager.MessagePrinter.text = "该角色MP不足，无法释放该技能";
@@ -281,6 +404,8 @@ public class GameManager : MonoBehaviour
 
     public void jiNeng2()
     {
+        CloseMoveRange();
+        CloseAttackRange();
         if(selected.GetComponent<PlayerControl>().Mp<selected.GetComponent<PlayerControl>().skill_2_MpCost)
         {
             uIManager.MessagePrinter.text = "该角色MP不足，无法释放该技能";
