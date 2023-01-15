@@ -29,6 +29,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ExploreMap.unity
     guid: 3f63d3ac98a7b9547907b02e8ab4f087
+  - enabled: 1
+    path: Assets/Scenes/FS7BOSS.unity
+    guid: 98e3f87d1d19c74439dcab57010918df
   - enabled: 0
     path: Assets/Scenes/FightingSceneDEMO.unity
     guid: 2cda990e2423bbf4892e6590ba056729
